@@ -1,7 +1,7 @@
 {
-    "name": "virtual-scrolling-tree",
-    "version": "0.5.1",
-    "description": "Virtual Scrolling Tree",
+    "name": "virtual-scrolling-tree-es",
+    "version": "0.5.3",
+    "description": "Virtual Scrolling Tree with update support",
     "author": "Paul Sweeney",
     "license": "MIT",
     "main": "dist/VirtualScrollingTree.cjs.js",

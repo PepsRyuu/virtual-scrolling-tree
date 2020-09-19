@@ -13,13 +13,13 @@ This project provides a vanilla JavaScript implementation of a virtual scrolling
 Install the package. The package provides many different formats depending on your tool setup.
 
 ```
-npm install virtual-scrolling-tree
+npm install virtual-scrolling-tree-es
 ```
 
 Assuming you're using ES6, you can then import the package.
 
 ```
-import VirtualScrollingTree from 'virtual-scrolling-tree';
+import VirtualScrollingTree from 'virtual-scrolling-tree-es';
 ```
 
 ## Running Examples
@@ -140,7 +140,9 @@ Please be advised that you should keep your custom properties namespaced to avoi
 | `destroy`        |              | Clean up the component. |
 | `expand`         | `item:Item` | Expands the specified item. See below for Item description. |
 | `collapse`       | `item:Item` | Collapses the specified item. See below for Item description. |
+| `isItemExpanded` | `item:Item` | Returns the expansion status of an item with children (user should check first). See below for Item description. |
 | `scrollIntoView` | `item:Item`, `[options:Object]` | Scrolls to the specified item. See below for Item description. Options accepts `align` which can either be `"start"` or `"end"`, which will align the item to the top or bottom of the viewport. |
+| `updateData`     | `numRootItems: number`, `parentsMap: Map<string, VT_Item>` | Allows you to update the grid contents while preserving any expansions that are still valid |
 
 ### Item Object
 

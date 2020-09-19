@@ -71,35 +71,66 @@ export default class VirtualScrollingTree {
         _(this).diffMode = options.diffMode || 'hard';
 
         this.redraw = this.redraw.bind(this);
+        this.expand = this.expand.bind(this);
+        this.collapse = this.collapse.bind(this);
+        this.updateData = this.updateData.bind(this);
+        this.isItemExpanded = this.isItemExpanded.bind(this);
 
         window.addEventListener('resize', this.redraw);
         prepareView.call(this);
         this.redraw();
     }
 
+    updateExpansion(expansion, parentsMap) {
+        const findParent = parentsMap.get(expansion.id);
+        if (findParent) {
+            expansion.children = findParent.children;
+            expansion.parent = findParent.parent;
+            expansion.offset = findParent.offset;
+        }
+        const valid = expansion.expansions.filter((exp) => { return parentsMap.has(exp.id) }) || [];
+        valid.forEach((exp) => { this.updateExpansion(exp, parentsMap)} );
+        expansion.expansions = valid;
+    }
+
+    // Update only the data-specific members from a new root count and a map of valid ids (to preserve expansions)
+    updateData (numRootItems, parentsMap) {
+        _(this).expansions[0].children = numRootItems;
+        this.updateExpansion(_(this).expansions[0], parentsMap);    
+        this.redraw();
+    }
+    
     redraw () {
         requestData.call(this);
     }
 
-    expand (item) {
-        if (!isExpanded.call(this, item.parent)) {
-            throw new Error('Parent ' + item.parent + ' must be expanded to expand ' + item.id);
-        }
+    isItemExpanded (item) {
+        return isExpanded.call(this, item.id);
+    }
 
-        if (!isExpanded.call(this, item.id)) {
-            expandItem.call(this, item);
-            requestData.call(this);
+    expand (item) {
+        if (item.children) {
+            if (!isExpanded.call(this, item.parent)) {
+                throw new Error('Parent ' + item.parent + ' must be collapsed to expand ' + item.id);
+            }
+    
+            if (!isExpanded.call(this, item.id)) {
+                expandItem.call(this, item);
+                requestData.call(this);
+            }
         }
     }
     
     collapse (item) {
-        if (!isExpanded.call(this, item.parent)) {
-            throw new Error('Parent ' + item.parent + ' must be expanded to collapse ' + item.id);
-        }
+        if (item.children) {
+            if (!isExpanded.call(this, item.parent)) {
+                throw new Error('Parent ' + item.parent + ' must be expanded to collapse ' + item.id);
+            }
 
-        if (isExpanded.call(this, item.id)) {
-            collapseItem.call(this, item);
-            requestData.call(this);
+            if (isExpanded.call(this, item.id)) {
+                collapseItem.call(this, item);
+                requestData.call(this);
+            }
         }
     }
 
